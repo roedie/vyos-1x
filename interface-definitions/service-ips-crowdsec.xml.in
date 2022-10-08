@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<interfaceDefinition>
+  <node name="service">
+    <children>
+      <node name="ips">
+        <properties>
+          <help>Intrusion Prevention System</help>
+        </properties>
+        <children>
+          <node name="crowdsec" owner="${vyos_conf_scripts_dir}/service_ips_crowdsce.py">
+            <properties>
+              <help>Crowdsec protection parameters</help>
+              <priority>731</priority>
+            </properties>
+            <children>
+              <leafNode name="update-frequency">
+                <properties>
+                  <help>How often to check for updates</help>
+                  <valueHelp>
+                    <format>u32:1-4294967294</format>
+                    <description>Time in seconds</description>
+                  </valueHelp>
+                </properties>
+              </leafNode>
+              <leafNode name="api-url">
+                <properties>
+                  <help>URL of the LAPI</help>
+                </properties>
+              </leafNode>
+              <leafNode name="api-key">
+                <properties>
+                  <help>Key to access the LAPI</help>
+                </properties>
+              </leafNode>
+              </node>
+            </children>
+          </node>
+        </children>
+      </node>
+    </children>
+  </node>
+</interfaceDefinition>
