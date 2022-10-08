@@ -120,15 +120,13 @@ class EthernetInterfaceTest(BasicInterfaceTest.TestCase):
         cls._base_path = ['interfaces', 'ethernet']
         cls._mirror_interfaces = ['dum21354']
 
-        # we need to filter out VLAN interfaces identified by a dot (.)
-        # in their name - just in case!
+        # We only test on physical interfaces and not VLAN (sub-)interfaces
         if 'TEST_ETH' in os.environ:
             tmp = os.environ['TEST_ETH'].split()
             cls._interfaces = tmp
         else:
-            for tmp in Section.interfaces('ethernet'):
-                if not '.' in tmp:
-                    cls._interfaces.append(tmp)
+            for tmp in Section.interfaces('ethernet', vlan=False):
+                cls._interfaces.append(tmp)
 
         cls._macs = {}
         for interface in cls._interfaces:
@@ -205,7 +203,6 @@ class EthernetInterfaceTest(BasicInterfaceTest.TestCase):
         tmp = read_file(f'/proc/sys/net/core/rps_sock_flow_entries')
         self.assertEqual(int(tmp), global_rfs_flow)
 
-
         # delete configuration of RFS and check all values returned to default "0"
         for interface in self._interfaces:
             self.cli_delete(self._base_path + [interface, 'offload', 'rfs'])
@@ -218,9 +215,6 @@ class EthernetInterfaceTest(BasicInterfaceTest.TestCase):
             for i in range(0, queues):
                 tmp = read_file(f'/sys/class/net/{interface}/queues/rx-{i}/rps_flow_cnt')
                 self.assertEqual(int(tmp), 0)
-
-        tmp = read_file(f'/proc/sys/net/core/rps_sock_flow_entries')
-        self.assertEqual(int(tmp), 0)
 
 
     def test_non_existing_interface(self):
